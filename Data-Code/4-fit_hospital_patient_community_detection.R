@@ -128,8 +128,9 @@ df_walktrap <- bind_cols(fips_code = names(market), mkt = market) %>%
 df_walktrap %>% select(mkt) %>% unique() %>% 
   dim()
 
-setwd("/Users/kaylynsanbower/Dropbox/CMS-mrktshr/Data/Output/mkt_dfs")
-write.csv(df_walktrap, file = "combined-hospital-variables.csv")
+
+# save data for markets 
+write_rds(df_walktrap,path = here("Data/Output/mkt_dfs/mkts-fips-allyears.rds"))
 
 
 
