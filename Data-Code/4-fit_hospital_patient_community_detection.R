@@ -130,9 +130,7 @@ df_walktrap %>% select(mkt) %>% unique() %>%
 
 
 # save data for markets 
-write_rds(df_walktrap,path = here("Data/Output/mkt_dfs/mkts-fips-allyears.rds"))
-
-
+write_rds(df_walktrap,file = here("Data/Output/mkt_dfs/mkts-fips-allyears.rds"))
 
 
 # Create the igraph object from the adjacency matrix -- we'll use this graph for every CD method 
