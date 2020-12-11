@@ -3,7 +3,7 @@
 # https://github.com/graveja0/health-care-markets
 
 # Date: August 26, 2020
-
+# Updated: December 11, 2020 
 
 # Load Packages -----------------------------------------------------------
 
@@ -53,8 +53,17 @@ df_hosp_serv_zip <-
 
 names(df_hosp_serv_zip) %>% 
   walk(
-    ~write_rds(df_hosp_serv_zip[[.x]],path = here(paste0("/Data/Output/hosp-zip-data-",.x,".rds")))
+    ~write_rds(df_hosp_serv_zip[[.x]],file = here(paste0("/Data/Output/hosp-zip-data-",.x,".rds")))
   )
+
+#---Combine (row bind) each year of data to use the aggregate market share measures 
+# this is for the yelp model -- not overly concerned about markets changing each year
+
+df_allyears <- rbindlist(df_hosp_serv_zip) %>% group_by(prvnumgrp, zip_code) %>% 
+  summarise(total_days_of_care = sum(total_days_of_care, na.rm = TRUE),
+            total_charges = sum(total_charges, na.rm=T),
+            total_cases = sum(total_cases, na.rm=T)) %>% 
+  na_if(0) %>% ungroup()
 
 # JG's comments: 
 # We now need to roll these ZIP level data up to the county level. We
@@ -68,7 +77,8 @@ df_zip_to_fips <-
   read_rds(here("Data/Output/zcta-to-fips-county.rds"))
 
 df_hosp_serv18_fips <-
-  df_hosp_serv_zip[[1]] %>%
+  df_allyears %>% 
+  # use this if you just want one year df_hosp_serv_zip[[1]] %>%
   left_join(df_zip_to_fips,"zip_code") %>%
   mutate_at(vars(total_days_of_care,total_charges, total_cases), function(x) x * .$pct_of_zip_in_fips) %>%
   group_by(prvnumgrp,fips_code) %>%

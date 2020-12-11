@@ -24,5 +24,5 @@ tmp <- data.table::fread("Data/Input/zcta-to-county.csv",header=TRUE) %>%
   mutate(pct_of_zip_in_fips = as.numeric(paste0(afact))) %>% 
   tibble::as_tibble() %>% 
   select(zip_code,fips_code,pct_of_zip_in_fips) %>% 
-  write_rds(path = here("Data/Output/zcta-to-fips-county.rds"))
+  write_rds(file = here("Data/Output/zcta-to-fips-county.rds"))
 
